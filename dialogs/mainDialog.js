@@ -9,18 +9,18 @@ const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialo
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
 
 class MainDialog extends ComponentDialog {
-    constructor(luisRecognizer, bookingDialog) {
+    constructor(luisRecognizer, chooseRoleDialog) {
         super('MainDialog');
 
         if (!luisRecognizer) throw new Error('[MainDialog]: Missing parameter \'luisRecognizer\' is required');
         this.luisRecognizer = luisRecognizer;
 
-        if (!bookingDialog) throw new Error('[MainDialog]: Missing parameter \'bookingDialog\' is required');
+        if (!chooseRoleDialog) throw new Error('[MainDialog]: Missing parameter \'chooseRoleDialog\' is required');
 
         // Define the main dialog and its related components.
         // This is a sample "book a flight" dialog.
         this.addDialog(new TextPrompt('TextPrompt'))
-            .addDialog(bookingDialog)
+            .addDialog(chooseRoleDialog)
             .addDialog(new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
                 this.introStep.bind(this),
                 this.actStep.bind(this),
@@ -69,11 +69,11 @@ class MainDialog extends ComponentDialog {
      * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
      */
     async actStep(stepContext) {
-        let bookingDetails = {};
+        let chooseRoleDetails = {};
 
         if (!this.luisRecognizer.isConfigured) {
             // LUIS is not configured, we just run the BookingDialog path.
-            return await stepContext.beginDialog('bookingDialog', bookingDetails);
+            return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
         }
 
         // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
@@ -87,14 +87,14 @@ class MainDialog extends ComponentDialog {
             // Show a warning for Origin and Destination if we can't resolve them.
             await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
 
-            // Initialize BookingDetails with any entities we may have found in the response.
-            bookingDetails.destination = toEntities.airport;
-            bookingDetails.origin = fromEntities.airport;
-            bookingDetails.travelDate = this.luisRecognizer.getTravelDate(luisResult);
-            console.log('LUIS extracted these booking details:', JSON.stringify(bookingDetails));
+            // Initialize chooseRoleDetails with any entities we may have found in the response.
+            chooseRoleDetails.destination = toEntities.airport;
+            chooseRoleDetails.origin = fromEntities.airport;
+            chooseRoleDetails.travelDate = this.luisRecognizer.getTravelDate(luisResult);
+            console.log('LUIS extracted these booking details:', JSON.stringify(chooseRoleDetails));
 
             // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-            return await stepContext.beginDialog('bookingDialog', bookingDetails);
+            return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
 
         case 'GetWeather':
             // We haven't implemented the GetWeatherDialog so we just display a TODO message.

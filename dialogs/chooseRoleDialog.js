@@ -12,9 +12,9 @@ const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
 const TEXT_PROMPT = 'textPrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';
 
-class BookingDialog extends CancelAndHelpDialog {
+class ChooseRoleDialog extends CancelAndHelpDialog {
     constructor(id) {
-        super(id || 'bookingDialog');
+        super(id || 'chooseRoleDialog');
 
         this.addDialog(new TextPrompt(TEXT_PROMPT))
             .addDialog(new ConfirmPrompt(CONFIRM_PROMPT))
@@ -34,30 +34,30 @@ class BookingDialog extends CancelAndHelpDialog {
      * If a destination city has not been provided, prompt for one.
      */
     async destinationStep(stepContext) {
-        const bookingDetails = stepContext.options;
+        const chooseRoleDetails = stepContext.options;
 
-        if (!bookingDetails.destination) {
+        if (!chooseRoleDetails.destination) {
             const messageText = 'Cara... cara... pra onde voce quer ir, cara?';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
-        return await stepContext.next(bookingDetails.destination);
+        return await stepContext.next(chooseRoleDetails.destination);
     }
 
     /**
      * If an origin city has not been provided, prompt for one.
      */
     async originStep(stepContext) {
-        const bookingDetails = stepContext.options;
+        const chooseRoleDetails = stepContext.options;
 
         // Capture the response to the previous step's prompt
-        bookingDetails.destination = stepContext.result;
-        if (!bookingDetails.origin) {
+        chooseRoleDetails.destination = stepContext.result;
+        if (!chooseRoleDetails.origin) {
             const messageText = 'Ma daonde voce ta saindo, cara?';
             const msg = MessageFactory.text(messageText, 'Ma daonde voce ta saindo, cara?', InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
-        return await stepContext.next(bookingDetails.origin);
+        return await stepContext.next(chooseRoleDetails.origin);
     }
 
     /**
@@ -65,25 +65,25 @@ class BookingDialog extends CancelAndHelpDialog {
      * This will use the DATE_RESOLVER_DIALOG.
      */
     async travelDateStep(stepContext) {
-        const bookingDetails = stepContext.options;
+        const chooseRoleDetails = stepContext.options;
 
         // Capture the results of the previous step
-        bookingDetails.origin = stepContext.result;
-        if (!bookingDetails.travelDate || this.isAmbiguous(bookingDetails.travelDate)) {
-            return await stepContext.beginDialog(DATE_RESOLVER_DIALOG, { date: bookingDetails.travelDate });
+        chooseRoleDetails.origin = stepContext.result;
+        if (!chooseRoleDetails.travelDate || this.isAmbiguous(chooseRoleDetails.travelDate)) {
+            return await stepContext.beginDialog(DATE_RESOLVER_DIALOG, { date: chooseRoleDetails.travelDate });
         }
-        return await stepContext.next(bookingDetails.travelDate);
+        return await stepContext.next(chooseRoleDetails.travelDate);
     }
 
     /**
      * Confirm the information the user has provided.
      */
     async confirmStep(stepContext) {
-        const bookingDetails = stepContext.options;
+        const chooseRoleDetails = stepContext.options;
 
         // Capture the results of the previous step
-        bookingDetails.travelDate = stepContext.result;
-        const messageText = `Please confirm, I have you traveling to: ${ bookingDetails.destination } from: ${ bookingDetails.origin } on: ${ bookingDetails.travelDate }. Is this correct?`;
+        chooseRoleDetails.travelDate = stepContext.result;
+        const messageText = `Please confirm, I have you traveling to: ${ chooseRoleDetails.destination } from: ${ chooseRoleDetails.origin } on: ${ chooseRoleDetails.travelDate }. Is this correct?`;
         const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
 
         // Offer a YES/NO prompt.
@@ -95,8 +95,8 @@ class BookingDialog extends CancelAndHelpDialog {
      */
     async finalStep(stepContext) {
         if (stepContext.result === true) {
-            const bookingDetails = stepContext.options;
-            return await stepContext.endDialog(bookingDetails);
+            const chooseRoleDetails = stepContext.options;
+            return await stepContext.endDialog(chooseRoleDetails);
         }
         return await stepContext.endDialog();
     }
@@ -107,4 +107,4 @@ class BookingDialog extends CancelAndHelpDialog {
     }
 }
 
-module.exports.BookingDialog = BookingDialog;
+module.exports.ChooseRoleDialog = ChooseRoleDialog;
