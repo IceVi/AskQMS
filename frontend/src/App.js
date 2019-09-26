@@ -1,8 +1,9 @@
 import React from "react";
 import { DirectLine } from "botframework-directlinejs";
 import ReactWebChat from "botframework-webchat";
-import { Container, Grid, Typography } from "@material-ui/core";
+import { Container, Typography } from "@material-ui/core";
 import "./App.css";
+import { ReactComponent as Logo } from './logo.svg';
 
 function App() {
   const directLine = new DirectLine({
@@ -10,6 +11,9 @@ function App() {
   });
   return (
     <Container fixed className="container">
+      <div className="header">
+        <Logo className="logo"/>
+      </div>
       <Typography variant="h3" align="center" m="50px">
         Chatbot
       </Typography>
