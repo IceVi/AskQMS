@@ -3,7 +3,6 @@
 
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { MessageFactory, InputHints } = require('botbuilder');
-const { LuisRecognizer } = require('botbuilder-ai');
 const { ComponentDialog, DialogSet, DialogTurnStatus, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 
 const MAIN_WATERFALL_DIALOG = 'mainWaterfallDialog';
@@ -53,13 +52,13 @@ class MainDialog extends ComponentDialog {
      * Note that the sample LUIS model will only recognize Paris, Berlin, New York and London as airport cities.
      */
     async introStep(stepContext) {
-        if (!this.luisRecognizer.isConfigured) {
-            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
-            await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
-            return await stepContext.next();
-        }
+        // if (!this.luisRecognizer.isConfigured) {
+        //     const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
+        //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
+        //     return await stepContext.next();
+        // }
 
-        const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : 'What can I help you with today?\nSay something like "Book a flight from Paris to Berlin on March 22, 2020"';
+        const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : 'What can I help you with today?\nChoose any of the options above or type something."';
         const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
         return await stepContext.prompt('TextPrompt', { prompt: promptMessage });
     }
@@ -71,41 +70,12 @@ class MainDialog extends ComponentDialog {
     async actStep(stepContext) {
         let chooseRoleDetails = {};
 
-        if (!this.luisRecognizer.isConfigured) {
-            // LUIS is not configured, we just run the BookingDialog path.
+        if (stepContext.result == 'Roles') {
             return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
-        }
-
-        // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
-        const luisResult = await this.luisRecognizer.executeLuisQuery(stepContext.context);
-        switch (LuisRecognizer.topIntent(luisResult)) {
-        case 'BookFlight':
-            // Extract the values for the composite entities from the LUIS result.
-            const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
-            const toEntities = this.luisRecognizer.getToEntities(luisResult);
-
-            // Show a warning for Origin and Destination if we can't resolve them.
-            await this.showWarningForUnsupportedCities(stepContext.context, fromEntities, toEntities);
-
-            // Initialize chooseRoleDetails with any entities we may have found in the response.
-            chooseRoleDetails.destination = toEntities.airport;
-            chooseRoleDetails.origin = fromEntities.airport;
-            chooseRoleDetails.travelDate = this.luisRecognizer.getTravelDate(luisResult);
-            console.log('LUIS extracted these booking details:', JSON.stringify(chooseRoleDetails));
-
-            // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-            return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
-
-        case 'GetWeather':
-            // We haven't implemented the GetWeatherDialog so we just display a TODO message.
-            const getWeatherMessageText = 'TODO: get weather flow here';
-            await stepContext.context.sendActivity(getWeatherMessageText, getWeatherMessageText, InputHints.IgnoringInput);
-            break;
-
-        default:
-            // Catch all for unhandled intents
-            const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
-            await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
+        } else {
+            var messageText = stepContext.result + " not implemented yet. Hope you understand ;p"
+            const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+            return await stepContext.prompt('TextPrompt', { prompt: msg });
         }
 
         return await stepContext.next();
@@ -147,7 +117,7 @@ class MainDialog extends ComponentDialog {
             // If the call to the booking service was successful tell the user.
             const timeProperty = new TimexProperty(result.travelDate);
             const travelDateMsg = timeProperty.toNaturalLanguage(new Date(Date.now()));
-            const msg = `I have you booked to ${ result.destination } from ${ result.origin } on ${ travelDateMsg }.`;
+            const msg = `I have you booked to ${ result.role } from ${ result.origin } on ${ travelDateMsg }.`;
             await stepContext.context.sendActivity(msg, msg, InputHints.IgnoringInput);
         }
 

@@ -13,7 +13,7 @@
       "spacing": "medium",
       "size": "default",
       "weight": "bolder",
-      "text": "Welcome to Aks QMS Bot!",
+      "text": "Welcome to Ask QMS Bot!",
       "wrap": true,
       "maxLines": 0
     },
@@ -21,26 +21,26 @@
       "type": "TextBlock",
       "size": "default",
       "isSubtle": "yes",
-      "text": "Now that you have successfully run your bot, follow these links for your amusement.",
+      "text": "My name is PARKER. I'll help you searching for information within the CI QMS. \n \nChoose a theme:",
       "wrap": true,
       "maxLines": 0
     }
   ],
   "actions": [
     {
-      "type": "Action.OpenUrl",
-      "title": "Get an overview",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0"
+      "type": "Action.Submit",
+      "title": "Roles",
+      "data": "Roles"
     },
     {
-      "type": "Action.OpenUrl",
-      "title": "Ask a question",
-      "url": "https://stackoverflow.com/questions/tagged/botframework"
+      "type": "Action.Submit",
+      "title": "Product Creation Process",
+      "data": "Product Creation Process"
     },
     {
-      "type": "Action.OpenUrl",
-      "title": "Pudim",
-      "url": "http://pudim.com.br/"
+      "type": "Action.Submit",
+      "title": "Quality & Standardization",
+      "data": "Quality & Standardization"
     }
   ]
 }
