@@ -36,7 +36,7 @@ class GetFilesDialog extends CancelAndHelpDialog {
         const words = stepContext.result;
 
         for (let i = 0; i < files.length; i++) {
-            const messageText = `${ files[i].code } - ${ files[i].fileName.link(files[i].link) }`;
+            const messageText = `${ files[i].code } - [${ files[i].fileName }](${ files[i].link })`;
             const msg = MessageFactory.text(messageText, messageText);
             stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
