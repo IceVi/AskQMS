@@ -70,15 +70,13 @@ class MainDialog extends ComponentDialog {
     async actStep(stepContext) {
         let chooseRoleDetails = {};
 
-        if (stepContext.result == 'Roles') {
+        if (stepContext.result === 'Roles') {
             return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
         } else {
-            var messageText = stepContext.result + " not implemented yet. Hope you understand ;p"
+            var messageText = stepContext.result + ' not implemented. Hope you understand ;p';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt('TextPrompt', { prompt: msg });
         }
-
-        return await stepContext.next();
     }
 
     /**
@@ -109,15 +107,7 @@ class MainDialog extends ComponentDialog {
     async finalStep(stepContext) {
         // If the child dialog ("bookingDialog") was cancelled or the user failed to confirm, the Result here will be null.
         if (stepContext.result) {
-            const result = stepContext.result;
-            // Now we have all the booking details.
-
-            // This is where calls to the booking AOU service or database would go.
-
-            // If the call to the booking service was successful tell the user.
-            const timeProperty = new TimexProperty(result.travelDate);
-            const travelDateMsg = timeProperty.toNaturalLanguage(new Date(Date.now()));
-            const msg = `I have you booked to ${ result.role } from ${ result.origin } on ${ travelDateMsg }.`;
+            const msg = `Hope you find everything you were looking for.\nUntil next time, my friend...`;
             await stepContext.context.sendActivity(msg, msg, InputHints.IgnoringInput);
         }
 
