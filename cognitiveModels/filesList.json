@@ -1,0 +1,33 @@
+{
+    "name": "FilesList",
+    "desc": "File list for AskQMS",
+    "culture": "en-us",
+    "intents": [
+        {
+            "name": "FilesList"
+        },
+        {
+            "name": "Cancel"
+        },
+        {
+            "name": "GetFiles"
+        },
+        {
+            "name": "None"
+        }
+    ],
+    "byRoles": {
+        "allEmployers": [
+            {
+                "code": "0301-01-P",
+                "localFileName": "0301-01-P.pdf",
+                "fileName": "Clinical Evaluation Procedure R3.0"
+            },
+            {
+                "code": "0730-02-W1",
+                "localFileName": "0730-02-W1.pdf",
+                "fileName": "Mandatory Roles for Document Creation, Review and Approval R16.0"
+            }
+        ]
+    }
+  }

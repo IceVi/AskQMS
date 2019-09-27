@@ -70,10 +70,10 @@ class MainDialog extends ComponentDialog {
     async actStep(stepContext) {
         let chooseRoleDetails = {};
 
-        if (stepContext.result == 'Roles') {
+        if (stepContext.result === 'Roles') {
             return await stepContext.beginDialog('chooseRoleDialog', chooseRoleDetails);
         } else {
-            var messageText = stepContext.result + " not implemented. Hope you understand ;p"
+            var messageText = stepContext.result + ' not implemented. Hope you understand ;p';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt('TextPrompt', { prompt: msg });
         }
