@@ -21,7 +21,7 @@
       "type": "TextBlock",
       "size": "default",
       "isSubtle": "yes",
-      "text": "My name is PARKER. I'll help you searching for information within the CI QMS. \n \nChoose a theme:",
+      "text": "My name is XXXXXX. I'll help you searching for information within the CI QMS. \n \nChoose a theme:",
       "wrap": true,
       "maxLines": 0
     }
