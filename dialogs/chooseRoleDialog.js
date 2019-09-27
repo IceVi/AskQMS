@@ -1,13 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { InputHints, MessageFactory } = require('botbuilder');
-const { ConfirmPrompt, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
+const { TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
 
-const CONFIRM_PROMPT = 'confirmPrompt';
-const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
 const TEXT_PROMPT = 'textPrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';
 
@@ -16,11 +13,9 @@ class ChooseRoleDialog extends CancelAndHelpDialog {
         super(id || 'chooseRoleDialog');
 
         this.addDialog(new TextPrompt(TEXT_PROMPT))
-            .addDialog(new ConfirmPrompt(CONFIRM_PROMPT))
             .addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
                 this.roleStep.bind(this),
-                this.originStep.bind(this),
-                this.finalStep.bind(this)
+                this.originStep.bind(this)
             ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
@@ -46,18 +41,18 @@ class ChooseRoleDialog extends CancelAndHelpDialog {
     async originStep(stepContext) {
         const chooseRoleDetails = stepContext.options;
 
-        chooseRoleDetails.role = stepContext.result;
-        if (chooseRoleDetails.role == 'All Employers') {
+        chooseRoleDetails.role = stepContext.result.toLowerCase();
+        if (chooseRoleDetails.role == 'all employers') {
             const messageText = 'All Employers selected';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         } 
-        else if(chooseRoleDetails.role == 'Test Engineer') {
+        else if(chooseRoleDetails.role == 'test engineer') {
             const messageText = 'Test Engineer selected';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
-        else if(chooseRoleDetails.role == 'Technical Writer') {
+        else if(chooseRoleDetails.role == 'technical writer') {
             const messageText = 'Tech writer selected';
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
@@ -67,22 +62,6 @@ class ChooseRoleDialog extends CancelAndHelpDialog {
             const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
-    }
-
-    /**
-     * Complete the interaction and end the dialog.
-     */
-    async finalStep(stepContext) {
-        if (stepContext.result === true) {
-            const chooseRoleDetails = stepContext.options;
-            return await stepContext.endDialog(chooseRoleDetails);
-        }
-        return await stepContext.endDialog();
-    }
-
-    isAmbiguous(timex) {
-        const timexPropery = new TimexProperty(timex);
-        return !timexPropery.types.has('definite');
     }
 }
 
