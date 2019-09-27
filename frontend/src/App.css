@@ -164,3 +164,30 @@ input {
 button {
   cursor: pointer;
 }
+/* .css-1t62idy {
+  max-height: 71vh;
+} */
+
+#webchat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100% !important;
+  margin-top: 25px;
+}
+#webchat,
+#webchat > * {
+  height: 750px;
+  width: 852px;
+}
+.css-1t62idy {
+  outline: 0px;
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f4eff7;
+}
+.css-gtdio3 {
+  border-radius: 10px;
+  margin-bottom: -5px;
+}

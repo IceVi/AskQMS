@@ -11,6 +11,7 @@ const WATERFALL_DIALOG = 'waterfallDialog';
 const fs = require('fs');
 const pdf = require('pdf-parse');
 
+
 class GetFilesDialog extends CancelAndHelpDialog {
     constructor(id) {
         super(id || 'getFilesDialog');
@@ -35,10 +36,52 @@ class GetFilesDialog extends CancelAndHelpDialog {
         const files = chooseRoleDetails.files;
         const words = stepContext.result;
 
-        for (let i = 0; i < files.length; i++) {
-            const messageText = `${ files[i].code } - [${ files[i].fileName }](${ files[i].link })`;
-            const msg = MessageFactory.text(messageText, messageText);
-            stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+        if (words) {
+            for (let i = 0; i < files.length; i++) {
+                let dataBuffer = fs.readFileSync(`./files/${files[i].localFileName}`);
+
+                pdf(dataBuffer).then(function(data) {
+ 
+                    // // number of pages
+                    // console.log(data.numpages);
+                    // // number of rendered pages
+                    // console.log(data.numrender);
+                    // // PDF info
+                    // console.log(data.info);
+                    // // PDF metadata
+                    // console.log(data.metadata); 
+                    // // PDF.js version
+                    // // check https://mozilla.github.io/pdf.js/getting_started/
+                    // console.log(data.version);
+                    // PDF text
+                    
+                    const pdfContent = data.text;
+                    
+                    if(pdfContent.includes(words)) {
+                        let index = pdfContent.indexOf(words);
+                        let initial = 0;
+                        let end = 200;
+                        if (index - 100 > 0) {
+                            initial = index - 100;
+                        }
+                        if (index + 100 < data.text.length) {
+                            end = index + 100;
+                        }
+                        let smallText = data.text.substring(initial, end);
+
+                        let re = new RegExp(words, 'g');
+                        const result = smallText.replace(re, '**'+words+'**');
+
+                        let messageText = `${ files[i].code } - [${ files[i].fileName }](${ files[i].link }) \n\n [...]${ result }[...]`;
+                        let msg = MessageFactory.text(messageText, messageText);
+                        stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+
+                        messageText = `Oops... I was wrong about the error. It seems I'm awesome and got your files ;p`;
+                        msg = MessageFactory.text(messageText, messageText);
+                        stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+                    }
+                });
+            }
         }
     }
 }

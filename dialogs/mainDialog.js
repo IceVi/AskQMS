@@ -57,7 +57,6 @@ class MainDialog extends ComponentDialog {
         //     await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
         //     return await stepContext.next();
         // }
-        this.beginDialog(activity.address, 'initialize');
 
         const messageText = stepContext.options.restartMsg ? stepContext.options.restartMsg : `What can I help you with today?\nChoose any of the options above or type something.`;
         const promptMessage = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
