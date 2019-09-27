@@ -17,37 +17,28 @@ class GetFilesDialog extends CancelAndHelpDialog {
 
         this.addDialog(new TextPrompt(TEXT_PROMPT))
             .addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-                this.getFiles.bind(this)
+                this.searchWordsStep.bind(this),
+                this.getFilesStep.bind(this)
             ]));
 
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
-    async getFiles(stepContext) {
+    async searchWordsStep(stepContext) {
+        const messageText = 'Please enter the words or sentence you are looking for:';
+        const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+        return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+    }
+
+    async getFilesStep(stepContext) {
         const chooseRoleDetails = stepContext.options;
         const files = chooseRoleDetails.files;
+        const words = stepContext.result;
 
         for (let i = 0; i < files.length; i++) {
-            let dataBuffer = fs.readFileSync('./files/' + files[i].localFileName);
-            pdf(dataBuffer).then(function(data) {
-                // number of pages
-                // console.log(data.numpages);
-                // number of rendered pages
-                // console.log(data.numrender);
-                // PDF info
-                // console.log(data.info);
-                // PDF metadata
-                // console.log(data.metadata)
-                // PDF.js version
-                // check https://mozilla.github.io/pdf.js/getting_started/
-                // console.log(data.version);
-                // PDF text
-                // console.log(data.text)
-                let smallText = data.text.substring(1, 100);
-                const messageText = `${ files[i].code } - ${ files[i].fileName }:\n ${ smallText }`;
-                const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
-                stepContext.prompt(TEXT_PROMPT, { prompt: msg });
-            });
+            const messageText = `${ files[i].code } - ${ files[i].fileName.link(files[i].link) }`;
+            const msg = MessageFactory.text(messageText, messageText);
+            stepContext.prompt(TEXT_PROMPT, { prompt: msg });
         }
     }
 }
