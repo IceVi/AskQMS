@@ -11,6 +11,12 @@ const DATE_RESOLVER_DIALOG = 'dateResolverDialog';
 const TEXT_PROMPT = 'textPrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';
 
+const fs = require('fs');
+const pdf = require('pdf-parse');
+ 
+let dataBuffer = fs.readFileSync('./dialogs/teds.pdf');
+
+
 class ChooseRoleDialog extends CancelAndHelpDialog {
     constructor(id) {
         super(id || 'chooseRoleDialog');
@@ -48,9 +54,27 @@ class ChooseRoleDialog extends CancelAndHelpDialog {
 
         chooseRoleDetails.role = stepContext.result;
         if (chooseRoleDetails.role == 'All Employers') {
-            const messageText = 'All Employers selected';
-            const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
-            return await stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+
+                pdf(dataBuffer).then(function(data) {
+ 
+                    // number of pages
+                    // console.log(data.numpages);
+                    // number of rendered pages
+                    // console.log(data.numrender);
+                    // PDF info
+                    // console.log(data.info);
+                    // PDF metadata
+                    // console.log(data.metadata); 
+                    // PDF.js version
+                    // check https://mozilla.github.io/pdf.js/getting_started/
+                    // console.log(data.version);
+                    // PDF text
+                    // console.log(data.text); 
+                    const messageText = `All Employers selected. Heres some info from the PDF Teds about All Employers${data.text}` ;
+                    const msg = MessageFactory.text(messageText, messageText, InputHints.ExpectingInput);
+                    return stepContext.prompt(TEXT_PROMPT, { prompt: msg });
+                });
+
         } 
         else if(chooseRoleDetails.role == 'Test Engineer') {
             const messageText = 'Test Engineer selected';

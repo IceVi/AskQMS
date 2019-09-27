@@ -1,7 +1,7 @@
 import React from "react";
 import { DirectLine } from "botframework-directlinejs";
 import ReactWebChat from "botframework-webchat";
-import { Container, Grid, Typography } from "@material-ui/core";
+import { Container, Typography } from "@material-ui/core";
 import "./App.css";
 
 function App() {
