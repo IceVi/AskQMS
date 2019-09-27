@@ -15,8 +15,8 @@ function App() {
       <div className="header">
         <Logo className="logo" />
       </div>
-      <Typography variant="h3" align="center" m="50px">
-        Chatbot
+      <Typography variant="h4" align="center" m="50px" className="title">
+        Ask QMS
       </Typography>
       <div id="webchat">
         <ReactWebChat
