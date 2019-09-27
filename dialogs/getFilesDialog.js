@@ -75,10 +75,6 @@ class GetFilesDialog extends CancelAndHelpDialog {
                         let messageText = `${ files[i].code } - [${ files[i].fileName }](${ files[i].link }) \n\n [...]${ result }[...]`;
                         let msg = MessageFactory.text(messageText, messageText);
                         stepContext.prompt(TEXT_PROMPT, { prompt: msg });
-
-                        messageText = `Oops... I was wrong about the error. It seems I'm awesome and got your files ;p`;
-                        msg = MessageFactory.text(messageText, messageText);
-                        stepContext.prompt(TEXT_PROMPT, { prompt: msg });
                     }
                 });
             }
